@@ -15,13 +15,20 @@ client.on('ready', () => {
 
 client.on('message', message => {
   if(message.content === 'ping'){
-    message.reply("dont ping me idiot, wheres my jungler");
+    message.reply("pong!");
   }
 
-  else if(message.content === '!kys'){
+  else if(message.content === '!quit'){ // repeat? check later
     console.log("terminated");
     client.destroy();
     process.exit(1);
+  }
+
+  else if(message.content === '!help') {
+    message.reply("Here are my functions:");
+    message.reply("!join: joins voice channel and plays a sound");
+    message.reply("ping: pong!");
+    message.reply("!quit: disables me :(");
   }
 
   else if(message.content === '!join') {
@@ -45,7 +52,7 @@ client.on('message', message => {
 });
 
 client.on('message', message => {
-  if(message.content === '!kys'){
+  if(message.content === '!quit'){
     console.log("terminated");
     client.destroy();
     process.exit(1);
