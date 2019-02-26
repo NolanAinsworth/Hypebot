@@ -25,10 +25,10 @@ client.on('message', message => {
   }
 
   else if(message.content === '!help') {
-    message.reply("Here are my functions:");
-    message.reply("!join: joins voice channel and plays a sound");
-    message.reply("ping: pong!");
-    message.reply("!quit: disables me :(");
+    message.reply(`Here are my functions:
+    !join: joins voice channel and plays a sound -- temporary
+    ping: pong!
+    !quit: disables me :( `);
   }
 
   else if(message.content === '!join') {
