@@ -7,7 +7,11 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const settings = require('./settings.json');
 
+var NUM_OF_AUDIOS = 2 //number of possible audio files, plus 1
 var prefix = "!";
+var random = getRandom(NUM_OF_AUDIOS);
+if(random == 0)
+  random++;
 
 client.on('ready', () => {
   console.log(`Successfully logged in as ${client.user.tag} `);
@@ -35,11 +39,13 @@ client.on('message', message => {
     if(message.member.voiceChannel) {
       message.member.voiceChannel.join()
         .then(connection => {
-          const dispatcher = connection.playFile("./bell.mp3");
+
+          const dispatcher = connection.playFile(`./audio/clip${1}.mp3`);
 
           dispatcher.on('end', () => {
               if(message.guild.voiceConnection) {
                 message.guild.voiceConnection.disconnect();
+                random = getRandom(NUM_OF_AUDIOS);
               } else {
                 console.log("error");
               }
@@ -51,12 +57,14 @@ client.on('message', message => {
   }
 });
 
-client.on('message', message => {
-  if(message.content === '!quit'){
-    console.log("terminated");
-    client.destroy();
-    process.exit(1);
-  }
-});
-
 client.login(settings.token);
+
+// Functions that don't interact with Discord
+
+function getRandom(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
+function waiter() {
+  console.log("waiting");
+}

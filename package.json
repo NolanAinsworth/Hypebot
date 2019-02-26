@@ -1,6 +1,6 @@
 {
   "name": "cheongbot",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Silly discord bot",
   "main": "app.js",
   "scripts": {
@@ -11,6 +11,7 @@
   "dependencies": {
     "discord.js": "^11.4.2",
     "ffmpeg-binaries": "^4.0.0",
+    "node-opus": "^0.3.1",
     "opusscript": "0.0.6"
   }
 }
