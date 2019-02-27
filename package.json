@@ -1,6 +1,6 @@
 {
   "name": "cheongbot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Silly discord bot",
   "main": "app.js",
   "scripts": {
