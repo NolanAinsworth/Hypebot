@@ -27,14 +27,17 @@ client.on('message', message => {
 
   console.log(`Command \'${command}\' received`);
 
-  if(command === 'ping'){
-    message.reply("pong!");
+  if(command === 'help') {
+    message.member.send(`Here are my functions:
+    !cheong: joins voice channel and plays a cheong sound
+    !bubba: he's coming
+    !dice: rolls a dice
+    !ping: pong!
+    !quit: disables me :( `);
   }
 
-  else if(command === 'quit'){
-    console.log("terminated");
-    client.destroy();
-    process.exit(1);
+  else if(command === 'ping') {
+    message.reply("pong!");
   }
 
   else if(command === 'test') {
@@ -42,39 +45,11 @@ client.on('message', message => {
     message.channel.send(`test: ${testVar}`);
   }
 
-  else if(command === 'help') {
-    message.reply(`Here are my functions:
-    !join: joins voice channel and plays a sound
-    !bubba: he's coming
-    !dice: rolls a dice
-    !ping: pong!
-    !quit: disables me :( `);
-  }
-
   else if(command === 'dice') {
     message.channel.send(`You rolled a ${getRandom(7)}`);
   }
 
-  else if(command === 'bubba') {
-    if(message.member.voiceChannel) {
-      message.member.voiceChannel.join()
-        .then(connection => {
-          const dispatcher = connection.playFile(`./audio/bubba.mp3`);
-
-          dispatcher.on('end', () => {
-              if(message.guild.voiceConnection) {
-                message.guild.voiceConnection.disconnect();
-              } else {
-                console.log("error");
-              }
-          });
-        }).catch(console.log);
-    } else {
-      message.reply("You aren't in a voice channel");
-    }
-  }
-
-  else if(command === 'join') {
+  else if(command === 'cheong') {
     if(message.member.voiceChannel) {
       message.member.voiceChannel.join()
         .then(connection => {
@@ -96,16 +71,38 @@ client.on('message', message => {
       message.reply("You aren't in a voice channel");
     }
   }
+
+  else if(command === 'bubba') {
+    if(message.member.voiceChannel) {
+      message.member.voiceChannel.join()
+        .then(connection => {
+          const dispatcher = connection.playFile(`./audio/bubba.mp3`);
+
+          dispatcher.on('end', () => {
+              if(message.guild.voiceConnection) {
+                message.guild.voiceConnection.disconnect();
+              } else {
+                console.log("error");
+              }
+          });
+        }).catch(console.log);
+    } else {
+      message.reply("You aren't in a voice channel");
+    }
+  }
+
+  else if(command === 'quit') {
+    console.log("terminated");
+    client.destroy();
+    process.exit(1);
+  }
+
 });
 
 client.login(settings.token);
 
-// Functions that don't interact with Discord
+// Functions that don't interact with Discord API
 
 function getRandom(max) {
   return Math.floor(Math.random() * Math.floor(max));
-}
-
-function waiter() {
-  console.log("waiting");
 }
