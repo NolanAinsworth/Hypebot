@@ -1,21 +1,27 @@
-// Cheong Bot 1.0.1
+// Cheong Bot 1.1.3
 // Created by: Nolan Ainsworth
 // Private use only
+
+// TODO: Korean word of the day
 
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const settings = require('./settings.json');
+const fs = require('fs');
 
-var NUM_OF_AUDIOS = 7 //number of possible audio files, plus 1
+var NUM_OF_AUDIOS = 6; //number of possible audio files, plus 1
+var NUM_OF_KOREAN = 2;
 var prefix = "!";
-var random = getRandom(NUM_OF_AUDIOS);
-if(random == 0)
-  random++;
+var random = getRandomAudio(NUM_OF_AUDIOS);
+var randomKorean = getRandomAudio(NUM_OF_KOREAN);
 
 client.on('ready', () => {
   console.log(`Successfully logged in as ${client.user.tag} `);
-  client.user.setActivity('inting botlane');
+  //console.log(client.channels); // returns list of channels bot is in
+  //let channel = client.channels.get('193225167671918592');
+  //channel.send("message on login -- commented for reference");
+  client.user.setActivity('!help for cmds: version 1.1.3');
 });
 
 client.on('message', message => {
@@ -33,7 +39,8 @@ client.on('message', message => {
     !bubba: he's coming
     !dice: rolls a dice
     !ping: pong!
-    !quit: disables me :( `);
+    !quit: disables me :(
+    I'm currently version 1.0.3!`);
   }
 
   else if(command === 'ping') {
@@ -59,7 +66,7 @@ client.on('message', message => {
           dispatcher.on('end', () => {
               if(message.guild.voiceConnection) {
                 message.guild.voiceConnection.disconnect();
-                random = getRandom(NUM_OF_AUDIOS);
+                random = getRandomAudio(NUM_OF_AUDIOS);
                 if(random === 0)
                   random++;
               } else {
@@ -91,6 +98,17 @@ client.on('message', message => {
     }
   }
 
+  else if(command === 'korean') {
+    //let w = window.open(`${randomKorean}.txt`);
+    //message.channel.send(w.print());
+    randomKorean = getRandom(NUM_OF_KOREAN + 1);
+    if(randomKorean === 0)
+      randomKorean++;
+
+    var korean = fs.readFileSync(`./korean/${randomKorean}.txt`, {"encoding": "utf-8"});
+    message.channel.send(korean);
+  }
+
   else if(command === 'quit') {
     console.log("terminated");
     client.destroy();
@@ -105,4 +123,14 @@ client.login(settings.token);
 
 function getRandom(max) {
   return Math.floor(Math.random() * Math.floor(max));
+}
+
+function getRandomAudio(max) {
+  max++;
+  let result = Math.floor(Math.random() * Math.floor(max));
+  if(result === 0) {
+    max--;
+    getRandomAudio(max);
+  }
+  return result;
 }
