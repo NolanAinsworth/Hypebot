@@ -1,17 +1,14 @@
-// Cheong Bot 1.1.3
+// Cheong Bot 1.1.7
 // Created by: Nolan Ainsworth
 // Private use only
-
-// TODO: Korean word of the day
-
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const settings = require('./settings.json');
 const fs = require('fs');
 
-var NUM_OF_AUDIOS = 6; //number of possible audio files, plus 1
-var NUM_OF_KOREAN = 2;
+var NUM_OF_AUDIOS = 6; // number of possible audio files
+var NUM_OF_KOREAN = 4; // number of possible "korean" phrases
 var prefix = "!";
 var random = getRandomAudio(NUM_OF_AUDIOS);
 var randomKorean = getRandomAudio(NUM_OF_KOREAN);
@@ -21,8 +18,10 @@ client.on('ready', () => {
   //console.log(client.channels); // returns list of channels bot is in
   //let channel = client.channels.get('193225167671918592');
   //channel.send("message on login -- commented for reference");
-  client.user.setActivity('!help for cmds: version 1.1.3');
+  client.user.setActivity('!help for cmds: v1.1.7');
 });
+
+client.on('error', (e) => console.error(e));
 
 client.on('message', message => {
 
@@ -37,20 +36,40 @@ client.on('message', message => {
     message.member.send(`Here are my functions:
     !cheong: joins voice channel and plays a cheong sound
     !bubba: he's coming
+    !korean: Gives you a korean phrase of the day
+    !acquired: acquired
     !dice: rolls a dice
+    !say: repeats back what you put after the command
     !ping: pong!
     !quit: disables me :(
-    I'm currently version 1.0.3!`);
+    I'm currently version 1.1.7!`);
   }
 
   else if(command === 'ping') {
     message.reply("pong!");
   }
 
-  else if(command === 'test') {
-    let testVar = args[0];
-    message.channel.send(`test: ${testVar}`);
+  else if(command === 'say') {
+    message.channel.send(message.content.replace('!say ',''));
   }
+
+  else if(command === 'hehe') {
+    message.channel.send("hehe");
+  }
+
+  else if(command === 'pipe') {
+    message.channel.send("pipes aren't funny Rose.");
+  }
+
+  else if(command === 'acquired') {
+    message.channel.send("Acquired", {files: ["./acquired.jpg"]});
+  }
+
+  // commented out as reference to how to use args (roughly)
+  // else if(command === 'test') {
+  //   let testVar = args[0];
+  //   message.channel.send(`test: ${testVar}`);
+  // }
 
   else if(command === 'dice') {
     message.channel.send(`You rolled a ${getRandom(7)}`);
