@@ -1,4 +1,4 @@
-// Cheong Bot 1.1.7
+// Cheong Bot
 // Created by: Nolan Ainsworth
 // Private use only
 
@@ -7,6 +7,7 @@ const client = new Discord.Client();
 const settings = require('./settings.json');
 const fs = require('fs');
 
+let VERSION = "1.1.8"
 var NUM_OF_AUDIOS = 6; // number of possible audio files
 var NUM_OF_KOREAN = 4; // number of possible "korean" phrases
 var prefix = "!";
@@ -18,7 +19,7 @@ client.on('ready', () => {
   //console.log(client.channels); // returns list of channels bot is in
   //let channel = client.channels.get('193225167671918592');
   //channel.send("message on login -- commented for reference");
-  client.user.setActivity('!help for cmds: v1.1.7');
+  client.user.setActivity(`!help for cmds: v${VERSION}`);
 });
 
 client.on('error', (e) => console.error(e));
@@ -42,7 +43,22 @@ client.on('message', message => {
     !say: repeats back what you put after the command
     !ping: pong!
     !quit: disables me :(
-    I'm currently version 1.1.7!`);
+    I'm currently version ${VERSION}!`);
+  }
+
+  else if(command === 'dev') {
+    message.member.send(`Here are the dev commands:
+    !dev-getuser: gives your discord user ID
+    !dev-channels: logs the channel info to the console
+    !ping: latency check`);
+  }
+
+  else if(command === 'dev-getuser') {
+    message.member.send(`Your user ID is: ${message.author.id}`);
+  }
+
+  else if(command === 'dev-channels') {
+    console.log(client.channels);
   }
 
   else if(command === 'ping') {
@@ -61,6 +77,10 @@ client.on('message', message => {
     message.channel.send("pipes aren't funny Rose.");
   }
 
+  else if(command === 'hello') {
+    message.channel.send("jello");
+  }
+
   else if(command === 'acquired') {
     message.channel.send("Acquired", {files: ["./acquired.jpg"]});
   }
@@ -72,7 +92,7 @@ client.on('message', message => {
   // }
 
   else if(command === 'dice') {
-    message.channel.send(`You rolled a ${getRandom(7)}`);
+    message.channel.send(`You rolled a ${getRandom(6) + 1}`);
   }
 
   else if(command === 'cheong') {
@@ -129,9 +149,17 @@ client.on('message', message => {
   }
 
   else if(command === 'quit') {
-    console.log("terminated");
-    client.destroy();
-    process.exit(1);
+    if(message.author.id === "126539294549606400" ||
+       message.author.id === "162286234176061440") { // CHECK IF THIS WORKS
+      message.channel.send("Disconnecting, bye!"); // fix this
+      console.log("terminated");
+      client.destroy();
+      process.exit(1);
+    }
+    else {
+      message.channel.send("Sorry, you aren't approved to disconnect me");
+    }
+
   }
 
 });
