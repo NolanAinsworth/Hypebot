@@ -1,5 +1,7 @@
 /node_modules
 /audio
+/korean
+acquired.jpg
 settings.json
 *.mp3
 node_modules
