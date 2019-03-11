@@ -7,7 +7,7 @@ const client = new Discord.Client();
 const settings = require('./settings.json');
 const fs = require('fs');
 
-let VERSION = "1.1.8"
+let VERSION = "1.1.9"
 var NUM_OF_AUDIOS = 6; // number of possible audio files
 var NUM_OF_KOREAN = 4; // number of possible "korean" phrases
 var prefix = "!";
@@ -39,7 +39,7 @@ client.on('message', message => {
     !bubba: he's coming
     !korean: Gives you a korean phrase of the day
     !acquired: acquired
-    !dice: rolls a dice
+    !dice [number]: rolls a dice with specified number of spaces, 6 if left blank
     !say: repeats back what you put after the command
     !ping: pong!
     !quit: disables me :(
@@ -92,7 +92,11 @@ client.on('message', message => {
   // }
 
   else if(command === 'dice') {
-    message.channel.send(`You rolled a ${getRandom(6) + 1}`);
+    let faces = args[0];
+    if(isNaN(faces))
+      message.channel.send(`You rolled a ${getRandom(6) + 1}`)
+    else
+      message.channel.send(`You rolled a ${getRandom(faces) + 1}`);
   }
 
   else if(command === 'cheong') {
