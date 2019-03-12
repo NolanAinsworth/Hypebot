@@ -7,7 +7,7 @@ const client = new Discord.Client();
 const settings = require('./settings.json');
 const fs = require('fs');
 
-let VERSION = "1.1.9"
+let VERSION = "1.2.1"
 var NUM_OF_AUDIOS = 6; // number of possible audio files
 var NUM_OF_KOREAN = 4; // number of possible "korean" phrases
 var prefix = "!";
@@ -36,6 +36,7 @@ client.on('message', message => {
   if(command === 'help') {
     message.member.send(`Here are my functions:
     !cheong: joins voice channel and plays a cheong sound
+    !hs [card]: tells you info about a given hearthstone card
     !bubba: he's coming
     !korean: Gives you a korean phrase of the day
     !acquired: acquired
@@ -97,6 +98,55 @@ client.on('message', message => {
       message.channel.send(`You rolled a ${getRandom(6) + 1}`)
     else
       message.channel.send(`You rolled a ${getRandom(faces) + 1}`);
+  }
+
+  else if(command === 'hs') {
+    let cards = require('./hearthstone/cards.json');
+    let targetCard = args.join(' ');;
+    console.log(targetCard);
+    var result = 0;
+    for(var i = 0; i < cards.length; i++) {
+      curr = cards[i].name;
+      if(curr === undefined) {
+        console.log("card failed to be found");
+      }
+      else if(curr.toUpperCase() === targetCard.toUpperCase()) {
+        result = cards[i];
+        console.log(result);
+        break;
+      }
+    }
+
+    if(result.type === "MINION") {
+      resultString = `${result.name}:
+      ${result.cost} mana
+      ${result.attack} attack
+      ${result.health} health
+      Effect: ${result.text}`
+    } else if(result.type === "SPELL") {
+      resultString = `${result.name}:
+      ${result.cost} mana
+      Effect: ${result.text}`
+    } else if (result.type === "HERO") {
+      resultString = `${result.name}:
+      ${result.cost} mana
+      ${result.armor} armor
+      Effect: ${result.text}`
+    } else if (result.type === "WEAPON") {
+      resultString = `${result.name}:
+      ${result.cost} mana
+      ${result.attack} attack
+      ${result.durability} durability
+      Effect: ${result.text}`
+    }
+
+    console.log(result);
+    if(result != 0)
+      message.channel.send(resultString);
+    else {
+      message.channel.send(`Card not found`);
+    }
+
   }
 
   else if(command === 'cheong') {
@@ -163,7 +213,6 @@ client.on('message', message => {
     else {
       message.channel.send("Sorry, you aren't approved to disconnect me");
     }
-
   }
 
 });
