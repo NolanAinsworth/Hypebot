@@ -7,7 +7,7 @@ const client = new Discord.Client();
 const settings = require('./settings.json');
 const fs = require('fs');
 
-let VERSION = "1.2.3"
+let VERSION = "1.2.5";
 var NUM_OF_AUDIOS = 6; // number of possible audio files
 var NUM_OF_KOREAN = 4; // number of possible "korean" phrases
 var prefix = "!";
@@ -95,7 +95,7 @@ client.on('message', message => {
   else if(command === 'dice') {
     let faces = args[0];
     if(isNaN(faces))
-      message.channel.send(`You rolled a ${getRandom(6) + 1}`)
+      message.channel.send(`You rolled a ${getRandom(6) + 1}`);
     else
       message.channel.send(`You rolled a ${getRandom(faces) + 1}`);
   }
@@ -122,31 +122,8 @@ client.on('message', message => {
       if(result.text === undefined)
         result.text = "";
       result.text = stripEffect(result.text);
-      resultString = constructResult(result)
+      resultString = constructResult(result);
     }
-    // if(result.type === "MINION") {
-    //   resultString = `${result.name}:
-    //   ${result.cost} mana
-    //   ${result.attack} attack
-    //   ${result.health} health
-    //   Effect: ${result.text}`
-    // } else if(result.type === "SPELL") {
-    //   resultString = `${result.name}:
-    //   ${result.cost} mana
-    //   Effect: ${result.text}`
-    // } else if (result.type === "HERO") {
-    //   resultString = `${result.name}:
-    //   ${result.cost} mana
-    //   ${result.armor} armor
-    //   Effect: ${result.text}`
-    // } else if (result.type === "WEAPON") {
-    //   resultString = `${result.name}:
-    //   ${result.cost} mana
-    //   ${result.attack} attack
-    //   ${result.durability} durability
-    //   Effect: ${result.text}`
-    // }
-
     console.log(result);
     if(result != 0)
       message.channel.send(resultString);
@@ -298,21 +275,20 @@ function constructResult(result) {
   if(result.type === "MINION") {
     resultString = `${result.name}: ${emoji}
     ${toProperCase(result.rarity)} ${result.cardClass.toLowerCase()} ${result.type.toLowerCase()} from ${result.set.toLowerCase()}
-    ${result.cost}/${result.attack}/${result.health} | ${result.text}`
+    ${result.cost}/${result.attack}/${result.health} | ${result.text}`;
   } else if(result.type === "SPELL") {
     resultString = `${result.name}: ${emoji}
     ${toProperCase(result.rarity)} ${result.cardClass.toLowerCase()} ${result.type.toLowerCase()} from ${result.set.toLowerCase()}
-    ${result.cost} mana | ${result.text}`
+    ${result.cost} mana | ${result.text}`;
   } else if (result.type === "HERO") {
     resultString = `${result.name}: ${emoji}
     ${toProperCase(result.rarity)} ${result.cardClass.toLowerCase()} ${result.type.toLowerCase()} from ${result.set.toLowerCase()}
-    ${result.cost} mana / ${result.armor} armor | ${result.text}`
+    ${result.cost} mana / ${result.armor} armor | ${result.text}`;
   } else if (result.type === "WEAPON") {
     resultString = `${result.name}: ${emoji}
     ${toProperCase(result.rarity)} ${result.cardClass.toLowerCase()} ${result.type.toLowerCase()} from ${result.set.toLowerCase()}
-    ${result.cost}/${result.attack}/${result.durability} | ${result.text}`
+    ${result.cost}/${result.attack}/${result.durability} | ${result.text}`;
   }
-
   return resultString;
 }
 
