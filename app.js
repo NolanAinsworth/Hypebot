@@ -7,7 +7,7 @@ const client = new Discord.Client();
 const settings = require('./settings.json');
 const fs = require('fs');
 
-let VERSION = "1.2.1"
+let VERSION = "1.2.3"
 var NUM_OF_AUDIOS = 6; // number of possible audio files
 var NUM_OF_KOREAN = 4; // number of possible "korean" phrases
 var prefix = "!";
@@ -102,7 +102,8 @@ client.on('message', message => {
 
   else if(command === 'hs') {
     let cards = require('./hearthstone/cards.json');
-    let targetCard = args.join(' ');;
+    let targetCard = args.join(' ').toUpperCase();
+    targetCard = checkNickname(targetCard);
     console.log(targetCard);
     var result = 0;
     for(var i = 0; i < cards.length; i++) {
@@ -110,35 +111,41 @@ client.on('message', message => {
       if(curr === undefined) {
         console.log("card failed to be found");
       }
-      else if(curr.toUpperCase() === targetCard.toUpperCase()) {
+      else if(curr.toUpperCase() === targetCard) {
         result = cards[i];
         console.log(result);
         break;
       }
     }
-
-    if(result.type === "MINION") {
-      resultString = `${result.name}:
-      ${result.cost} mana
-      ${result.attack} attack
-      ${result.health} health
-      Effect: ${result.text}`
-    } else if(result.type === "SPELL") {
-      resultString = `${result.name}:
-      ${result.cost} mana
-      Effect: ${result.text}`
-    } else if (result.type === "HERO") {
-      resultString = `${result.name}:
-      ${result.cost} mana
-      ${result.armor} armor
-      Effect: ${result.text}`
-    } else if (result.type === "WEAPON") {
-      resultString = `${result.name}:
-      ${result.cost} mana
-      ${result.attack} attack
-      ${result.durability} durability
-      Effect: ${result.text}`
+    resultString = "Card not found";
+    if(result != 0) {
+      if(result.text === undefined)
+        result.text = "";
+      result.text = stripEffect(result.text);
+      resultString = constructResult(result)
     }
+    // if(result.type === "MINION") {
+    //   resultString = `${result.name}:
+    //   ${result.cost} mana
+    //   ${result.attack} attack
+    //   ${result.health} health
+    //   Effect: ${result.text}`
+    // } else if(result.type === "SPELL") {
+    //   resultString = `${result.name}:
+    //   ${result.cost} mana
+    //   Effect: ${result.text}`
+    // } else if (result.type === "HERO") {
+    //   resultString = `${result.name}:
+    //   ${result.cost} mana
+    //   ${result.armor} armor
+    //   Effect: ${result.text}`
+    // } else if (result.type === "WEAPON") {
+    //   resultString = `${result.name}:
+    //   ${result.cost} mana
+    //   ${result.attack} attack
+    //   ${result.durability} durability
+    //   Effect: ${result.text}`
+    // }
 
     console.log(result);
     if(result != 0)
@@ -233,4 +240,83 @@ function getRandomAudio(max) {
     getRandomAudio(max);
   }
   return result;
+}
+
+function stripEffect(line) {
+  line = line.replace("<b>", '**');
+  line = line.replace("</b>", '**');
+  line = line.replace("\n", '');
+  line = line.replace("<i>", '_');
+  line = line.replace("</i>", '_');
+  line = line.replace("#", '');
+  line = line.replace("$", '');
+  return line;
+}
+
+function checkNickname(targetCard) {
+  oldTargetCard = targetCard;
+  cards = require('./hearthstone/nicknames.json');
+  for(var i = 0; i < cards.length; i++) {
+    curr = cards[i].name;
+    if(curr === undefined) {
+      console.log("no nickname found");
+    }
+    else if(curr.toUpperCase() === targetCard) {
+      targetCard = cards[i].realname;
+      console.log(`nickname found, real name: ${targetCard}`);
+      break;
+    }
+  }
+
+  if(targetCard === oldTargetCard)
+    console.log("no nickname found");
+  return targetCard;
+}
+
+function constructResult(result) {
+  emoji = ":no_entry:";
+  if(result.set === "CORE") {
+    result.set = "BASIC";
+    emoji = ":dragon:";
+  } else if(result.set === "EXPERT1") {
+    result.set = "CLASSIC";
+    emoji = ":dragon:";
+  } else if(result.set === "GILNEAS") {
+    result.set = "WITCHWOOD";
+    emoji = ":dragon:";
+  } else if(result.set === "BOOMSDAY") {
+    emoji = ":dragon:";
+  } else if(result.set === "TROLL") {
+    result.set = "RASTAKHAN'S RUMBLE";
+    emoji = ":dragon:";
+  }
+
+  if(result.rarity === "FREE") {
+    result.rarity = "BASIC";
+  }
+
+  if(result.type === "MINION") {
+    resultString = `${result.name}: ${emoji}
+    ${toProperCase(result.rarity)} ${result.cardClass.toLowerCase()} ${result.type.toLowerCase()} from ${result.set.toLowerCase()}
+    ${result.cost}/${result.attack}/${result.health} | ${result.text}`
+  } else if(result.type === "SPELL") {
+    resultString = `${result.name}: ${emoji}
+    ${toProperCase(result.rarity)} ${result.cardClass.toLowerCase()} ${result.type.toLowerCase()} from ${result.set.toLowerCase()}
+    ${result.cost} mana | ${result.text}`
+  } else if (result.type === "HERO") {
+    resultString = `${result.name}: ${emoji}
+    ${toProperCase(result.rarity)} ${result.cardClass.toLowerCase()} ${result.type.toLowerCase()} from ${result.set.toLowerCase()}
+    ${result.cost} mana / ${result.armor} armor | ${result.text}`
+  } else if (result.type === "WEAPON") {
+    resultString = `${result.name}: ${emoji}
+    ${toProperCase(result.rarity)} ${result.cardClass.toLowerCase()} ${result.type.toLowerCase()} from ${result.set.toLowerCase()}
+    ${result.cost}/${result.attack}/${result.durability} | ${result.text}`
+  }
+
+  return resultString;
+}
+
+function toProperCase(string) {
+  string = string.toLowerCase();
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
