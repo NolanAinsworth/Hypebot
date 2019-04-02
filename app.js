@@ -43,7 +43,7 @@ client.on('message', message => {
     !dice [number]: rolls a dice with specified number of spaces, 6 if left blank
     !say: repeats back what you put after the command
     !ping: pong!
-    !quit: disables me :(
+    !quit: disables me :( (if you're authorized to)
     I'm currently version ${VERSION}!`);
   }
 
@@ -102,34 +102,16 @@ client.on('message', message => {
 
   else if(command === 'hs') {
     let cards = require('./hearthstone/cards.json');
+
     let targetCard = args.join(' ').toUpperCase();
     targetCard = checkNickname(targetCard);
-    console.log(targetCard);
-    var result = 0;
-    for(var i = 0; i < cards.length; i++) {
-      curr = cards[i].name;
-      if(curr === undefined) {
-        console.log("card failed to be found");
-      }
-      else if(curr.toUpperCase() === targetCard) {
-        result = cards[i];
-        console.log(result);
-        break;
-      }
-    }
-    resultString = "Card not found";
-    if(result != 0) {
-      if(result.text === undefined)
-        result.text = "";
-      result.text = stripEffect(result.text);
-      resultString = constructResult(result);
-    }
-    console.log(result);
-    if(result != 0)
-      message.channel.send(resultString);
-    else {
-      message.channel.send(`Card not found`);
-    }
+    // i = 0;
+    // while(i < args.length) {
+    //   checkCard(targetCard, message, message.chanel, cards);
+    //   i++;
+    // }
+    checkCard(targetCard, message, message.channel, cards);
+
 
   }
 
@@ -176,8 +158,6 @@ client.on('message', message => {
   }
 
   else if(command === 'korean') {
-    //let w = window.open(`${randomKorean}.txt`);
-    //message.channel.send(w.print());
     randomKorean = getRandom(NUM_OF_KOREAN + 1);
     if(randomKorean === 0)
       randomKorean++;
@@ -188,8 +168,7 @@ client.on('message', message => {
 
   else if(command === 'quit') {
     if(message.author.id === "126539294549606400" ||
-       message.author.id === "162286234176061440") { // CHECK IF THIS WORKS
-      message.channel.send("Disconnecting, bye!"); // fix this
+       message.author.id === "162286234176061440") {
       console.log("terminated");
       client.destroy();
       process.exit(1);
@@ -219,14 +198,22 @@ function getRandomAudio(max) {
   return result;
 }
 
+// How can this be done better?
 function stripEffect(line) {
-  line = line.replace("<b>", '**');
-  line = line.replace("</b>", '**');
-  line = line.replace("\n", '');
-  line = line.replace("<i>", '_');
-  line = line.replace("</i>", '_');
-  line = line.replace("#", '');
-  line = line.replace("$", '');
+  i = 0;
+  while(i < line.length) {
+    line = line.replace("\n", ' ');
+    line = line.replace("<b>", '**');
+    line = line.replace("</b>", '**');
+    line = line.replace("<b>", '**');
+    line = line.replace("</b>", '**');
+    line = line.replace("\n", '');
+    line = line.replace("<i>", '_');
+    line = line.replace("</i>", '_');
+    line = line.replace("#", '');
+    line = line.replace("$", '');
+    i++;
+  }
   return line;
 }
 
@@ -266,6 +253,8 @@ function constructResult(result) {
   } else if(result.set === "TROLL") {
     result.set = "RASTAKHAN'S RUMBLE";
     emoji = ":dragon:";
+  } else if(result.set === "LOOTAPALOOZA") {
+    result.set = "K&C";
   }
 
   if(result.rarity === "FREE") {
@@ -273,6 +262,9 @@ function constructResult(result) {
   }
 
   if(result.type === "MINION") {
+    if(result.rarity === undefined) {
+      result.rarity = "token";
+    }
     resultString = `${result.name}: ${emoji}
     ${toProperCase(result.rarity)} ${result.cardClass.toLowerCase()} ${result.type.toLowerCase()} from ${result.set.toLowerCase()}
     ${result.cost}/${result.attack}/${result.health} | ${result.text}`;
@@ -295,4 +287,44 @@ function constructResult(result) {
 function toProperCase(string) {
   string = string.toLowerCase();
   return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function cleanString(string) {
+  string = string.toUpperCase();
+  string.replace(',', '');
+  string.replace('-', '');
+  string.replace('!', '');
+  string.replace('#', '');
+  string.replace('/', '');
+  string.replace('.', '');
+  return string;
+}
+
+function checkCard(targetCard, message, channel, cards) {
+  console.log(targetCard);
+  var result = 0;
+  for(var i = 0; i < cards.length; i++) {
+    curr = cards[i].name;
+    if(curr === undefined) {
+      console.log("card failed to be found");
+    }
+    else if(curr.toUpperCase() === targetCard) {
+      result = cards[i];
+      console.log(result);
+      break;
+    }
+  }
+  resultString = "Card not found";
+  if(result != 0) {
+    if(result.text === undefined)
+      result.text = "";
+    result.text = stripEffect(result.text);
+    resultString = constructResult(result);
+  }
+  console.log(result);
+  if(result != 0)
+    message.channel.send(resultString);
+  else {
+    message.channel.send(`Card not found`);
+  }
 }
