@@ -21,7 +21,7 @@
     "rarity": "LEGENDARY",
     "set": "TKG",
     "type": "MINION",
-    "text": "If both this card and it's target would survive combat with another minion, it goes back in and dies."
+    "text": "After combat with a minion if both this card and it's target would survive, it goes back in and dies."
   },
   {
     "artist": "Nutthapon Petchthai",
@@ -6446,7 +6446,7 @@
     "race": "MECHANICAL",
     "rarity": "LEGENDARY",
     "set": "BOOMSDAY",
-    "text": "<b>Magnetic</b>\n<b><b>Divine Shield</b>, <b>Taunt</b>, Lifesteal, Rush</b>",
+    "text": "<b>Magnetic</b>,\n<b>Divine Shield</b>, <b>Taunt</b>, <b>Lifesteal</b>, <b>Rush</b>",
     "type": "MINION"
   },
   {
