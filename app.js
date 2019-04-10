@@ -7,7 +7,7 @@ const client = new Discord.Client();
 const settings = require('./settings.json');
 const fs = require('fs');
 
-let VERSION = "1.2.5";
+let VERSION = "1.3.0";
 var NUM_OF_AUDIOS = 6; // number of possible audio files
 var NUM_OF_KOREAN = 4; // number of possible "korean" phrases
 var prefix = "!";
@@ -25,6 +25,16 @@ client.on('ready', () => {
 client.on('error', (e) => console.error(e));
 
 client.on('message', message => {
+
+  // this is awful code, clean up
+  // let it work with I'm, and handle periods, and words that start with "im"
+  if (message.content.indexOf("Im") === 0 ||
+      message.content.indexOf("im") === 0) {
+    console.log("Executing dad command");
+    let content = message.content.split(",");
+    final = content[0].slice(3, content[0].length);
+    message.reply(`Hi ${final}, I'm CheongBot!`);
+  }
 
   if (message.content.indexOf(prefix) !== 0) return;
 
@@ -166,6 +176,7 @@ client.on('message', message => {
     message.channel.send(korean);
   }
 
+  // TODO: add the id's to a seperate file, check if in
   else if(command === 'quit') {
     if(message.author.id === "126539294549606400" ||
        message.author.id === "162286234176061440") {
@@ -212,6 +223,7 @@ function stripEffect(line) {
     line = line.replace("</i>", '_');
     line = line.replace("#", '');
     line = line.replace("$", '');
+    line = line.replace("[x]", ''); // Why does this show up on cards?
     i++;
   }
   return line;
