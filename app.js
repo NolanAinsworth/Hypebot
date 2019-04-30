@@ -7,8 +7,9 @@ const client = new Discord.Client();
 const settings = require('./settings.json');
 const fs = require('fs');
 
-let VERSION = "1.3.0";
+var VERSION = "1.4.1";
 var NUM_OF_AUDIOS = 6; // number of possible audio files
+var NUM_OF_ROSE = 1;
 var NUM_OF_KOREAN = 4; // number of possible "korean" phrases
 var prefix = "!";
 var random = getRandomAudio(NUM_OF_AUDIOS);
@@ -31,7 +32,7 @@ client.on('message', message => {
   if (message.content.indexOf("Im") === 0 ||
       message.content.indexOf("im") === 0) {
     console.log("Executing dad command");
-    let content = message.content.split(",");
+    var content = message.content.split(",");
     final = content[0].slice(3, content[0].length);
     message.reply(`Hi ${final}, I'm CheongBot!`);
   }
@@ -103,7 +104,7 @@ client.on('message', message => {
   // }
 
   else if(command === 'dice') {
-    let faces = args[0];
+    var faces = args[0];
     if(isNaN(faces))
       message.channel.send(`You rolled a ${getRandom(6) + 1}`);
     else
@@ -111,15 +112,10 @@ client.on('message', message => {
   }
 
   else if(command === 'hs') {
-    let cards = require('./hearthstone/cards.json');
+    var cards = require('./hearthstone/cards.json');
 
-    let targetCard = args.join(' ').toUpperCase();
+    var targetCard = args.join(' ').toUpperCase();
     targetCard = checkNickname(targetCard);
-    // i = 0;
-    // while(i < args.length) {
-    //   checkCard(targetCard, message, message.chanel, cards);
-    //   i++;
-    // }
     checkCard(targetCard, message, message.channel, cards);
 
 
@@ -136,6 +132,32 @@ client.on('message', message => {
               if(message.guild.voiceConnection) {
                 message.guild.voiceConnection.disconnect();
                 random = getRandomAudio(NUM_OF_AUDIOS);
+                if(random === 0)
+                  random++;
+              } else {
+                console.log("error");
+              }
+          });
+        }).catch(console.log);
+    } else {
+      message.reply("You aren't in a voice channel");
+    }
+  }
+
+  else if(command === 'rose') {
+    if(message.member.voiceChannel) {
+      message.member.voiceChannel.join()
+        .then(connection => {
+          random = getRandomAudio(NUM_OF_ROSE);
+          if(random === 0)
+            random = 1;
+          console.log(random);
+          const dispatcher = connection.playFile(`./audio/rose${random}.mp3`);
+
+          dispatcher.on('end', () => {
+              if(message.guild.voiceConnection) {
+                message.guild.voiceConnection.disconnect();
+                random = getRandomAudio(NUM_OF_ROSE);
                 if(random === 0)
                   random++;
               } else {
@@ -201,7 +223,7 @@ function getRandom(max) {
 
 function getRandomAudio(max) {
   max++;
-  let result = Math.floor(Math.random() * Math.floor(max));
+  var result = Math.floor(Math.random() * Math.floor(max));
   if(result === 0) {
     max--;
     getRandomAudio(max);
