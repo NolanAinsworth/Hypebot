@@ -1,0 +1,11 @@
+{
+  "attack": 7,
+  "cardClass": "NEUTRAL",
+  "cost": 7,
+  "health": 7,
+  "name": "Austin, the yoon goon",
+  "rarity": "LEGENDARY",
+  "set": "TKG",
+  "type": "MINION",
+  "text": "After combat with a minion if both this card and it's target would survive, it goes back in and dies."
+},
